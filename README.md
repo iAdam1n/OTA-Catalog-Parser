@@ -1,5 +1,5 @@
 # OTA Catalog Parser
-This program lets you view an OTA update catalog for [audioOS](https://mesu.apple.com/assets/audio/com_apple_MobileAsset_SoftwareUpdate/com_apple_MobileAsset_SoftwareUpdate.xml), [iOS](https://mesu.apple.com/assets/com_apple_MobileAsset_SoftwareUpdate/com_apple_MobileAsset_SoftwareUpdate.xml), [tvOS](https://mesu.apple.com/assets/tv/com_apple_MobileAsset_SoftwareUpdate/com_apple_MobileAsset_SoftwareUpdate.xml), and [watchOS](https://mesu.apple.com/assets/watch/com_apple_MobileAsset_SoftwareUpdate/com_apple_MobileAsset_SoftwareUpdate.xml) in a more pleasant format. It can also output the information in a format suitable for entry on [The iPhone Wiki](https://www.theiphonewiki.com/wiki/OTA_Updates).
+This program lets you view an OTA update catalog for [audioOS](https://mesu.apple.com/assets/audio/com_apple_MobileAsset_SoftwareUpdate/com_apple_MobileAsset_SoftwareUpdate.xml), [iOS](https://mesu.apple.com/assets/com_apple_MobileAsset_SoftwareUpdate/com_apple_MobileAsset_SoftwareUpdate.xml), [tvOS](https://mesu.apple.com/assets/tv/com_apple_MobileAsset_SoftwareUpdate/com_apple_MobileAsset_SoftwareUpdate.xml), and [watchOS](https://mesu.apple.com/assets/watch/com_apple_MobileAsset_SoftwareUpdate/com_apple_MobileAsset_SoftwareUpdate.xml) in a more pleasant format. It can also output the information in a format suitable for entry on [The Apple Wiki](https://theapplewiki.com/wiki/OTA_Updates).
 
 It is also capable of making/receiving requests to Apple's [Pallas server](https://gdmf.apple.com/v2/assets), which also provides OTA updates.
 
@@ -16,9 +16,9 @@ The command-line version is cross-platform and requires either [Mono](http://www
 If no arguments are specified, the program will return the following information about the arguments that it uses.
 
 ### Required Arguments
-* `-d <device>` specifies what device you're looking for. This argument is looking for a value like "iPad2,3" or "iPod7,1." (If you do not know what value to use, you may refer to the identifiers listed on [The iPhone Wiki](https://www.theiphonewiki.com/wiki/Models).)
+* `-d <device>` specifies what device you're looking for. This argument is looking for a value like "iPad2,3" or "iPod7,1." (If you do not know what value to use, you may refer to the identifiers listed on [The Apple Wiki](https://theapplewiki.com/wiki/Models).)
 * `-f <file>` specifies the location of the OTA update catalog. This may be either an XML file saved on your computer, or a mesu.apple.com URL.
-* `-m <model>` specifies what device you're looking for. This argument is looking for a value like "N71AP" or "N66mAP." (If you do not know what value to use, you may refer to the internal names listed on [The iPhone Wiki](https://www.theiphonewiki.com/wiki/Models).)
+* `-m <model>` specifies what device you're looking for. This argument is looking for a value like "N71AP" or "N66mAP." (If you do not know what value to use, you may refer to the internal names listed on [The Apple Wiki](https://theapplewiki.com/wiki/Models).)
 * `-pb <OS build>` specifies the build that you are starting a query of Pallas requests from. Both this and `-pv` are required for querying Pallas requests only.
 * `-pv <OS version>` specifies the version that you are starting a query of Pallas requests from. Both this and `-pb` are required for querying Pallas requests only.
 
@@ -27,7 +27,7 @@ If no arguments are specified, the program will return the following information
 * `-max <OS version>` specifies the _highest_ version of iOS you're looking for. This argument is looking for a value like "4.3" or "8.0.1."
 * `-min <OS version>` _(renamed from_ `-o` _as of version 0.3)_ specifies the _lowest_ version of iOS you're looking for. This argument is looking for a value like "4.3" or "8.0.1."
 * `-t` adds the table headers, if `-w` is specified.
-* `-w` allows you to see the results formatted more appropriately for [The iPhone Wiki](https://www.theiphonewiki.com/wiki/OTA_Updates). Manual editing may still be required (e.g. for "marketing version"), but this will make the burden more bearable.
+* `-w` allows you to see the results formatted more appropriately for [The Apple Wiki](https://theapplewiki.com/wiki/OTA_Updates). Manual editing may still be required (e.g. for "marketing version"), but this will make the burden more bearable.
 
 ## Source Code Information
 When opening the solution in Visual Studio, one project will be incompatible, depending on your platform.
