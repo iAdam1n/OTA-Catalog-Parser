@@ -162,7 +162,7 @@ namespace Octothorpe.Lib
         private void CountRowspan()
         {
             foreach (OTAPackage entry in Packages)
-            {            
+            {
                 // Increment the count if the build exists.
                 if (BuildNumberRowspan.ContainsKey(entry.DeclaredBuild))
                     BuildNumberRowspan[entry.DeclaredBuild]++;
@@ -361,6 +361,9 @@ namespace Octothorpe.Lib
 
                         if (pallasCurrentVersion.CompareTo(new Version("17.0")) < 0)
                             AssetAudiences.Add("59377047-7b3f-45b9-8e99-294c0daf3c85", "Beta"); // audioOS 16 beta
+
+                        if (pallasCurrentVersion.CompareTo(new Version("18.0")) < 0)
+                            AssetAudiences.Add("17536d4c-1a9d-4169-bc62-920a3873f7a5", "Beta"); // audioOS 17 beta
                     }
                     break;
 
@@ -372,7 +375,7 @@ namespace Octothorpe.Lib
                         BuildInfo = (NSDictionary)BuildInfo["displayOS"];
                         SUAssetType = "com.apple.MobileAsset.DarwinAccessoryUpdate.A2525";
 
-                        AssetAudiences.Add("60b55e25-a8ed-4f45-826c-c1495a4ccc65", null);
+                        AssetAudiences.Add("02d8e57e-dd1c-4090-aa50-b4ed2aef0062", null);
                     }
 
                     // tvOS
@@ -441,7 +444,7 @@ namespace Octothorpe.Lib
                         if (pallasCurrentVersion.CompareTo(new Version("15.1")) >= 0 && pallasCurrentVersion.CompareTo(new Version("17.0")) < 0)
                             AssetAudiences.Add("a6050bca-50d8-4e45-adc2-f7333396a42c", "Beta"); // iOS 16 beta
 
-                        if (pallasCurrentVersion.CompareTo(new Version("15.7")) >= 0 && pallasCurrentVersion.CompareTo(new Version("18.0")) < 0)
+                        if (pallasCurrentVersion.CompareTo(new Version("15.1")) >= 0 && pallasCurrentVersion.CompareTo(new Version("18.0")) < 0)
                             AssetAudiences.Add("9dcdaf87-801d-42f6-8ec6-307bd2ab9955", "Beta"); // iOS 17 beta
                     }
 
@@ -474,7 +477,7 @@ namespace Octothorpe.Lib
                             AssetAudiences.Add("77c3bd36-d384-44e8-b550-05122d7da438", "Beta"); // macOS 14 beta
                     }
 
-                    // We also need to splice the build number.
+                    // We also need to splice the build number. This looked like an ideal spot to put it without creating another if statement.
                     foreach (char BuildChar in pallasCurrentBuild)
                     {
                         if ((char.IsDigit(BuildChar) || char.IsLower(BuildChar)) == false)
@@ -792,7 +795,7 @@ namespace Octothorpe.Lib
                 Output.AppendLine($"Timestamp: {package.Date('y')}/{package.Date('m')}/{package.Date('d')}");
 
                 // Compatibility Version.
-                Output.AppendLine($"Compatibility Version: {package.CompatibilityVersion}");
+                //Output.AppendLine($"Compatibility Version: {package.CompatibilityVersion}");
 
                 // Print out the URL and file size.
                 Output.AppendLine($"URL: {package.URL}");
@@ -859,11 +862,11 @@ namespace Octothorpe.Lib
                 Output.AppendLine("! Prerequisite Version");
                 Output.AppendLine("! Prerequisite Build");
 
-                if (DeviceIsWatch)
-                    Output.AppendLine("! Compatibility Version");
+                //if (DeviceIsWatch)
+                //    Output.AppendLine("! Compatibility Version");
 
                 Output.AppendLine("! Release Date");
-                Output.AppendLine("! Release Type");
+                //Output.AppendLine("! Release Type");
                 Output.AppendLine("! OTA Download URL");
                 Output.AppendLine("! File Size");
             }
@@ -918,8 +921,11 @@ namespace Octothorpe.Lib
                 }
 
                 // Obtain the file name.
+                fileName = string.Empty;
                 name = Regex.Match(package.URL, @"[0-9a-f]{40}\.zip");
-                fileName = (name.Success) ? name.ToString() : string.Empty;
+
+                if (name.Success)
+                    fileName = name.ToString();
 
                 // Hacky workaround to handle watchOS 2.x calling itself "9.0".
                 if (DeviceIsWatch && package.ActualBuild.StartsWith("13S"))
@@ -1084,8 +1090,8 @@ namespace Octothorpe.Lib
                     Output.AppendLine(package.PrerequisiteBuild);
                 }
 
-                if (package.CompatibilityVersion > 0)
-                    Output.AppendLine($"| {package.CompatibilityVersion}");
+                //if (package.CompatibilityVersion > 0)
+                //    Output.AppendLine($"| {package.CompatibilityVersion}");
 
                 // Date as extracted from the URL. Using the same rowspan count as build.
                 // (Apple occasionally releases updates with the same version, but different build number, silently.)
@@ -1107,18 +1113,18 @@ namespace Octothorpe.Lib
                 }
 
                 // Release Type.
-                Output.Append("| ");
+                //Output.Append("| ");
 
-                switch (package.ReleaseType)
-                {
-                    case "Public":
-                        Output.AppendLine("{{n/a}}");
-                        break;
+                //switch (package.ReleaseType)
+                //{
+                //    case "Public":
+                //Output.AppendLine("{{n/a}}");
+                //break;
 
-                    default:
-                        Output.AppendLine(package.ReleaseType);
-                        break;
-                }
+                //default:
+                //Output.AppendLine(package.ReleaseType);
+                //break;
+                //}
 
                 // Is there more than one of this prerequisite version tallied?
                 if ((FileRowspan.ContainsKey(package.URL) && FileRowspan[package.URL].Contains(package.PrerequisiteBuild)) || (BorkedDelta && package.OSVersion != "8.4.1"))

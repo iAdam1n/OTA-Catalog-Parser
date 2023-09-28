@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Octothorpe.Lib
@@ -35,7 +34,7 @@ namespace Octothorpe.Lib
     {
         private Match match;
         private readonly Dictionary<string, object> ENTRY;
-        private readonly NSDictionary BUILD_INFO_DICT = (NSDictionary)PropertyListParser.Parse($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}BuildInfo.plist");
+        private readonly NSDictionary BUILD_INFO_DICT = (NSDictionary)PropertyListParser.Parse(AppContext.BaseDirectory + Path.DirectorySeparatorChar + "BuildInfo.plist");
 
         public OTAPackage(Dictionary<string, object> package)
         {
@@ -215,7 +214,7 @@ namespace Octothorpe.Lib
         {
             get
             {
-                if (GetKeyFromBuildInfo("Beta") == null)
+                if (GetKey("Beta") == null)
                 {
                     string number = DocumentationID.Substring(DocumentationID.Length - 2);
 
@@ -237,7 +236,7 @@ namespace Octothorpe.Lib
 
                 else
                 {
-                    return (int)GetKeyFromBuildInfo("Beta");
+                    return (int)GetKey("Beta");
                 }
             }
         }
@@ -271,7 +270,7 @@ namespace Octothorpe.Lib
         /// </returns>
         public string Date()
         {
-            if (GetKeyFromBuildInfo("Date") == null)
+            if (GetKey("Date") == null)
             {
                 // Catch excess zeroes, e.g. "2016008004"
                 match = Regex.Match(URL, @"\d{4}(\-|\.)20\d{8}\-");
@@ -292,7 +291,7 @@ namespace Octothorpe.Lib
             }
 
             else
-                return GetKeyFromBuildInfo("Date").ToString();
+                return GetKey("Date").ToString();
         }
 
         /// <summary>
@@ -344,7 +343,7 @@ namespace Octothorpe.Lib
             }
         }
 
-        private object GetKeyFromBuildInfo(string name)
+        private object GetKey(string name)
         {
             NSDictionary ItemsForBuild;
             string osName = null;
@@ -447,20 +446,20 @@ namespace Octothorpe.Lib
         {
             get
             {
-                StringBuilder mv = new StringBuilder(OSVersion);
+                string mv = OSVersion;
 
                 if (ENTRY.ContainsKey("MarketingVersion"))
                 {
-                    mv = new StringBuilder((string)ENTRY["MarketingVersion"]);
+                    mv = (string)ENTRY["MarketingVersion"];
 
-                    if (mv.ToString().Contains(".") == false)
-                        mv.Append(".0");
+                    if (mv.Contains(".") == false)
+                        mv += ".0";
                 }
 
                 if (string.IsNullOrEmpty(ProductVersionExtra) == false)
-                    mv.Append($" {ProductVersionExtra}");
+                    mv += $" ${ProductVersionExtra}";
 
-                return mv.ToString();
+                return mv;
             }
         }
 
@@ -496,14 +495,14 @@ namespace Octothorpe.Lib
         {
             get
             {
-                if (GetKeyFromBuildInfo("Version") == null)
+                if (GetKey("Version") == null)
                 {
                     string version = (string)ENTRY["OSVersion"];
                     return (version.Substring(0, 3) == "9.9") ? version.Substring(4) : version;
                 }
 
                 else
-                    return (string)GetKeyFromBuildInfo("Version");
+                    return (string)GetKey("Version");
             }
         }
 
@@ -791,8 +790,8 @@ namespace Octothorpe.Lib
             if (PrerequisiteBuild == "N/A")
                 switch (ReleaseType)
                 {
-                    case "Beta":
-                        return "0000000001";
+                    //case "Beta":
+                        //return "0000000001";
 
                     case "Carrier":
                         return "0000000002";
@@ -843,7 +842,7 @@ namespace Octothorpe.Lib
                 // If the prerequisite version is less than 10, pad it.
                 string SortPreVer = (PrerequisiteVer().Split('.')[0].Length < 2) ? $"0{PrerequisiteVer()}" : PrerequisiteVer();
 
-                return $"{SortingBuild()}${SortPreVer.Split(' ')[0]}${SortingPrerequisiteBuild()}${CompatibilityVersion}${ActualReleaseType}";
+                return $"{SortingBuild()}${SortPreVer.Split(' ')[0]}${SortingPrerequisiteBuild()}${CompatibilityVersion}";
             }
         }
 
@@ -857,7 +856,7 @@ namespace Octothorpe.Lib
         {
             get
             {
-                return (string)GetKeyFromBuildInfo("Suffix");
+                return (string)GetKey("Suffix");
             }
         }
 
