@@ -10,4 +10,8 @@
     <StartAction>Project</StartAction>
     <StartArguments>-pv "13.5.1" -pb "17D80" -d iPhone8,1 -m N71AP</StartArguments>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'visionOS' ">
+    <StartAction>Project</StartAction>
+    <StartArguments>-pb 21N5165g -pv 1.0 -m N301AP -d RealityDevice14,1 -b</StartArguments>
+  </PropertyGroup>
 </Project>

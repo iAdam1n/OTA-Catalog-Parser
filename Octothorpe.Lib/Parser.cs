@@ -582,7 +582,7 @@ namespace Octothorpe.Lib
                         }
 
                         // If the build is a beta for audioOS, iOS, or tvOS, specify a release type.
-                        else if (Regex.IsMatch(build.Key, OTAPackage.REGEX_BETA) && Regex.IsMatch(Device, "AppleTV|Audio|iPad|iPhone"))
+                        else if (Regex.IsMatch(build.Key, OTAPackage.REGEX_BETA) && Regex.IsMatch(Device, "AppleTV|Audio|iPad|iPhone|Reality"))
                         {
                             JsonRequest = new
                             {
@@ -746,6 +746,10 @@ namespace Octothorpe.Lib
 
                     case "Wat":
                         osName = "watchOS";
+                        break;
+
+                    case "Rea":
+                        osName = "visionOS";
                         break;
 
                     default:

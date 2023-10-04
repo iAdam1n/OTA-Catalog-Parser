@@ -381,6 +381,11 @@ namespace Octothorpe.Lib
                             osName = "iOS";
                             break;
 
+                        // visionOS
+                        case "Rea":
+                            osName = "visionOS";
+                            break;
+
                         // watchOS
                         case "Wat":
                             osName = "watchOS";
@@ -567,6 +572,11 @@ namespace Octothorpe.Lib
                         case "iPh":
                         case "iPo":
                             osName = "iOS";
+                            break;
+
+                        // visionOS
+                        case "Rea":
+                            osName = "visionOS";
                             break;
 
                         // watchOS
