@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace Octothorpe.Lib
 {
@@ -346,53 +347,10 @@ namespace Octothorpe.Lib
         private object GetKey(string name)
         {
             NSDictionary ItemsForBuild;
-            string osName = null;
+            string osName = GetOSName();
             
             try
             {
-                // Items are separated by OS branch.
-                if (AssetType == "com.apple.MobileAsset.MacSoftwareUpdate")
-                    osName = "macOS";
-
-                else
-                {
-                    switch (SupportedDevices[0].Substring(0, 3))
-                    {
-                        // audioOS
-                        case "Aud":
-                            osName = "audioOS";
-                            break;
-
-                        // displayOS / tvOS
-                        case "App":
-                            osName = (SupportedDevices[0].Contains("Display") ? "displayOS" : "tvOS");
-                            break;
-
-                        // macOS
-                        case "iMa":
-                        case "Mac":
-                            osName = "macOS";
-                            break;
-
-                        // iOS / iPadOS
-                        case "iPa":
-                        case "iPh":
-                        case "iPo":
-                            osName = "iOS";
-                            break;
-
-                        // visionOS
-                        case "Rea":
-                            osName = "visionOS";
-                            break;
-
-                        // watchOS
-                        case "Wat":
-                            osName = "watchOS";
-                            break;
-                    }
-                }
-
                 foreach (KeyValuePair<string, NSObject> majorVersion in (NSDictionary)BUILD_INFO_DICT[osName])
                 {
                     if (((NSDictionary)majorVersion.Value).ContainsKey(ActualBuild))
@@ -462,7 +420,7 @@ namespace Octothorpe.Lib
                 }
 
                 if (string.IsNullOrEmpty(ProductVersionExtra) == false)
-                    mv += $" ${ProductVersionExtra}";
+                    mv += $" {ProductVersionExtra}";
 
                 return mv;
             }
@@ -527,6 +485,55 @@ namespace Octothorpe.Lib
             }
         }
 
+        public string GetOSName()
+        {
+            string osName = null;
+            // Items are separated by OS branch.
+            if (AssetType == "com.apple.MobileAsset.MacSoftwareUpdate" || AssetType == "com.apple.MobileAsset.MacSplatSoftwareUpdate")
+                osName = "macOS";
+
+            else
+            {
+                switch (SupportedDevices[0].Substring(0, 3))
+                {
+                    // audioOS
+                    case "Aud":
+                        osName = "audioOS";
+                        break;
+
+                    // displayOS / tvOS
+                    case "App":
+                        osName = (SupportedDevices[0].Contains("Display") ? "displayOS" : "tvOS");
+                        break;
+
+                    // macOS
+                    case "iMa":
+                    case "Mac":
+                        osName = "macOS";
+                        break;
+
+                    // iOS / iPadOS
+                    case "iPa":
+                    case "iPh":
+                    case "iPo":
+                        osName = "iOS";
+                        break;
+
+                    // visionOS
+                    case "Rea":
+                        osName = "visionOS";
+                        break;
+
+                    // watchOS
+                    case "Wat":
+                        osName = "watchOS";
+                        break;
+                }
+            }
+
+            return osName;
+        }
+
         /// <summary>
         /// "PrerequisiteVer" states the specific version that the OTA package is intended for, since most OTA packages are deltas.
         /// </summary>
@@ -538,54 +545,11 @@ namespace Octothorpe.Lib
             bool fuhgeddaboudit;
             int Beta = 0;
             NSDictionary ItemsForBuild = null;
-            string osName = null;
+            string osName = GetOSName();
             System.Text.StringBuilder VersionNum = new System.Text.StringBuilder();
 
             try
             {
-                // Items are separated by OS branch.
-                if (AssetType == "com.apple.MobileAsset.MacSoftwareUpdate")
-                    osName = "macOS";
-
-                else
-                {
-                    switch (SupportedDevices[0].Substring(0, 3))
-                    {
-                        // audioOS
-                        case "Aud":
-                            osName = "audioOS";
-                            break;
-
-                        // displayOS / tvOS
-                        case "App":
-                            osName = (SupportedDevices[0].Contains("Display") ? "displayOS" : "tvOS");
-                            break;
-
-                        // macOS
-                        case "iMa":
-                        case "Mac":
-                            osName = "macOS";
-                            break;
-
-                        // iOS / iPadOS
-                        case "iPa":
-                        case "iPh":
-                        case "iPo":
-                            osName = "iOS";
-                            break;
-
-                        // visionOS
-                        case "Rea":
-                            osName = "visionOS";
-                            break;
-
-                        // watchOS
-                        case "Wat":
-                            osName = "watchOS";
-                            break;
-                    }
-                }
-
                 foreach (KeyValuePair<string, NSObject> majorVersion in (NSDictionary)BUILD_INFO_DICT[osName])
                 {
                     ItemsForBuild = new NSDictionary();

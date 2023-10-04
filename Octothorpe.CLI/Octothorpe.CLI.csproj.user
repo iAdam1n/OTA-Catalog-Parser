@@ -14,4 +14,8 @@
     <StartAction>Project</StartAction>
     <StartArguments>-pb 21N5165g -pv 1.0 -m N301AP -d RealityDevice14,1 -b</StartArguments>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'RSR test' ">
+    <StartAction>Project</StartAction>
+    <StartArguments>-pv "13.3" -pb "22E5230e" -d MacBookAir10,1 -m J313AP -r -b</StartArguments>
+  </PropertyGroup>
 </Project>

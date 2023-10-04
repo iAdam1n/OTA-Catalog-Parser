@@ -110,6 +110,10 @@ namespace Octothorpe.CLI
                         Pallas = true;
                         break;
 
+                    case "-r":
+                        parser.RSR = true;
+                        break;
+
                     case "-s":
                         parser.RemoveStubs = true;
                         break;
