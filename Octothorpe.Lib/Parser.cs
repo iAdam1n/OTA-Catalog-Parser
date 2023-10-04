@@ -237,10 +237,10 @@ namespace Octothorpe.Lib
         private void ErrorCheck(bool Pallas)
         {
             // Device check.
-            if (Device == null || Regex.IsMatch(Device, @"(ADP|AppleDisplay|AppleTV|AudioAccessory|iMac(Pro)?|iPad|iPhone|iPod|Mac(mini|Pro)?|MacBook(Air|Pro)?|VirtualMac|Watch)(\d)?\d,\d") == false)
+            if (Device == null || Regex.IsMatch(Device, @"(ADP|AppleDisplay|AppleTV|AudioAccessory|iMac(Pro)?|iPad|iPhone|iPod|Mac(mini|Pro)?|MacBook(Air|Pro)?|RealityDevice|VirtualMac|Watch)(\d)?\d,\d") == false)
                 throw new ArgumentException("device");
 
-            if ((Device.Contains("ADP") || Device.Contains("AppleDisplay") || Device.Contains("Mac")) && Pallas == false)
+            if ((Device.Contains("ADP") || Device.Contains("AppleDisplay") || Device.Contains("Mac") || Device.Contains("Reality")) && Pallas == false)
                 throw new ArgumentException("needspallas");
 
             DeviceIsWatch = Regex.IsMatch(Device, @"Watch\d,\d");
@@ -490,6 +490,12 @@ namespace Octothorpe.Lib
                     }
 
                     ArrayIndex = 0;
+                    break;
+
+                // visionOS
+                case "Rea":
+                    BuildInfo = (NSDictionary)BuildInfo["visionOS"];
+                    AssetAudiences.Add("c59ff9d1-5468-4f6c-9e54-f68d5eeab93b", "Beta");
                     break;
 
                 // watchOS
