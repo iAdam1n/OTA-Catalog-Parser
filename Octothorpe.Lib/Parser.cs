@@ -36,7 +36,7 @@ namespace Octothorpe.Lib
 {
     public class Parser
     {
-        private bool fullTable, removeStubs, showBeta, pallasSupervised, wikiMarkup, AddStubBlurb, DeviceIsWatch;
+        private bool fullTable, removeStubs, showBeta, pallasSupervised, wikiMarkup, AddStubBlurb, DeviceIsWatch, rsr;
         private Dictionary<string, List<string>> FileRowspan = new Dictionary<string, List<string>>();
         private Dictionary<string, uint> BuildNumberRowspan = new Dictionary<string, uint>(),
             DateRowspan = new Dictionary<string, uint>(),
@@ -100,6 +100,11 @@ namespace Octothorpe.Lib
         public bool WikiMarkup
         {
             set { wikiMarkup = value; }
+        }
+
+        public bool RSR
+        {
+            set { rsr = true; }
         }
 
         public void LoadPlist(string AssetFile)
@@ -236,11 +241,14 @@ namespace Octothorpe.Lib
 
         private void ErrorCheck(bool Pallas)
         {
+            // RSR check
+            if (rsr && !(Pallas && Regex.IsMatch(Device, @"(iMac(Pro)?|iPad|iPhone|Mac(mini|Pro)?|MacBook(Air|Pro)?|VirtualMac)(\d)?\d,\d")))
+                throw new ArgumentException("rsr");
             // Device check.
-            if (Device == null || Regex.IsMatch(Device, @"(ADP|AppleDisplay|AppleTV|AudioAccessory|iMac(Pro)?|iPad|iPhone|iPod|Mac(mini|Pro)?|MacBook(Air|Pro)?|VirtualMac|Watch)(\d)?\d,\d") == false)
+            if (Device == null || Regex.IsMatch(Device, @"(ADP|AppleDisplay|AppleTV|AudioAccessory|iMac(Pro)?|iPad|iPhone|iPod|Mac(mini|Pro)?|MacBook(Air|Pro)?|RealityDevice|VirtualMac|Watch)(\d)?\d,\d") == false)
                 throw new ArgumentException("device");
 
-            if ((Device.Contains("ADP") || Device.Contains("AppleDisplay") || Device.Contains("Mac")) && Pallas == false)
+            if ((Device.Contains("ADP") || Device.Contains("AppleDisplay") || Device.Contains("Mac") || Device.Contains("Reality")) && Pallas == false)
                 throw new ArgumentException("needspallas");
 
             DeviceIsWatch = Regex.IsMatch(Device, @"Watch\d,\d");
@@ -480,7 +488,7 @@ namespace Octothorpe.Lib
                     // We also need to splice the build number. This looked like an ideal spot to put it without creating another if statement.
                     foreach (char BuildChar in pallasCurrentBuild)
                     {
-                        if ((char.IsDigit(BuildChar) || char.IsLower(BuildChar)) == false)
+                        if ((char.IsDigit(BuildChar)) == false)
                             ArrayIndex++;
 
                         SplicedBuildNum[ArrayIndex] = $"{SplicedBuildNum[ArrayIndex]}{BuildChar}";
@@ -490,6 +498,12 @@ namespace Octothorpe.Lib
                     }
 
                     ArrayIndex = 0;
+                    break;
+
+                // visionOS
+                case "Rea":
+                    BuildInfo = (NSDictionary)BuildInfo["visionOS"];
+                    AssetAudiences.Add("c59ff9d1-5468-4f6c-9e54-f68d5eeab93b", "Beta");
                     break;
 
                 // watchOS
@@ -522,6 +536,12 @@ namespace Octothorpe.Lib
                     break;
             }
 
+            if (rsr)
+            {
+                // Mac is MacSplatSoftwareUpdate, iOS is SplatSoftwareUpdate
+                SUAssetType = SUAssetType.Replace("Software", "SplatSoftware");
+            }
+
             foreach (KeyValuePair<string, NSObject> osVersion in BuildInfo)
             {
                 // If the version is lower than our starting version, skip it.
@@ -546,7 +566,7 @@ namespace Octothorpe.Lib
                         request.AddHeader("Content-type", "application/json");
 
                         // Add the JSON body. Macs have slightly different parameters.
-                        if (SUAssetType == "com.apple.MobileAsset.MacSoftwareUpdate")
+                        if (SUAssetType == "com.apple.MobileAsset.MacSoftwareUpdate" || SUAssetType == "com.apple.MobileAsset.MacSplatSoftwareUpdate")
                         {
                             JsonRequest = new
                             {
@@ -554,6 +574,7 @@ namespace Octothorpe.Lib
                                 AssetAudience = PallasAssetAudience.Key,
                                 AssetType = SUAssetType,
                                 BaseUrl = "https://mesu.apple.com/assets/macos/",
+                                Build = build.Key,
                                 BuildVersion = build.Key,
                                 ClientData = new
                                 {
@@ -576,7 +597,7 @@ namespace Octothorpe.Lib
                         }
 
                         // If the build is a beta for audioOS, iOS, or tvOS, specify a release type.
-                        else if (Regex.IsMatch(build.Key, OTAPackage.REGEX_BETA) && Regex.IsMatch(Device, "AppleTV|Audio|iPad|iPhone"))
+                        else if (Regex.IsMatch(build.Key, OTAPackage.REGEX_BETA) && Regex.IsMatch(Device, "AppleTV|Audio|iPad|iPhone|Reality"))
                         {
                             JsonRequest = new
                             {
@@ -585,6 +606,7 @@ namespace Octothorpe.Lib
                                 AssetAudience = PallasAssetAudience.Key,
                                 AssetType = SUAssetType,
                                 BaseUrl = "https://mesu.apple.com/assets/",
+                                Build = build.Key,
                                 BuildVersion = build.Key,
                                 ClientData = new
                                 {
@@ -622,6 +644,7 @@ namespace Octothorpe.Lib
                                 AssetAudience = PallasAssetAudience.Key,
                                 AssetType = SUAssetType,
                                 BaseUrl = "https://mesu.apple.com/assets/",
+                                Build = build.Key,
                                 BuildVersion = build.Key,
                                 ClientData = new
                                 {
@@ -648,7 +671,6 @@ namespace Octothorpe.Lib
                                 Supervised = pallasSupervised
                             };
                         }
-
 
                         // We can't use RestRequest.AddJsonBody() because Pallas is picky about the aforementioned headers.
                         request.AddStringBody(JsonConvert.SerializeObject(JsonRequest), DataFormat.Json);
@@ -740,6 +762,10 @@ namespace Octothorpe.Lib
 
                     case "Wat":
                         osName = "watchOS";
+                        break;
+
+                    case "Rea":
+                        osName = "visionOS";
                         break;
 
                     default:
