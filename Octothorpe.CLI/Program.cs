@@ -73,6 +73,7 @@ namespace Octothorpe.CLI
                         Console.WriteLine("-b               Displays beta firmwares. By default, this is disabled.");
                         Console.WriteLine("-max <version>   Choose the highest firmware version you are searching for. (e.g. 9.0.2)");
                         Console.WriteLine("-min <version>   Choose the lowest firmware version you are searching for. (e.g. 8.4.1)");
+                        Console.WriteLine("-r               Check for Rapid Security Responses. Only supported for iOS and macOS.");
                         Console.WriteLine("-s               Removes stubs. Apple uses stubs for problematic OTA updates.");
                         Console.WriteLine("-t               If -w is specified, the parser will also output the table headers.");
                         Console.WriteLine("-w               Formats the output for The iPhone Wiki.");
@@ -153,6 +154,10 @@ namespace Octothorpe.CLI
 
                     case "notmesu":
                         Console.WriteLine("The URL supplied should belong to mesu.apple.com.");
+                        break;
+
+                    case "rsr":
+                        Console.WriteLine("Rapid Security Responses are only supported for iPhones, iPads, and Macs");
                         break;
 
                     default:
