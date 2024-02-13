@@ -503,7 +503,14 @@ namespace Octothorpe.Lib
                 // visionOS
                 case "Rea":
                     BuildInfo = (NSDictionary)BuildInfo["visionOS"];
-                    AssetAudiences.Add("c59ff9d1-5468-4f6c-9e54-f68d5eeab93b", "Beta");
+
+                    AssetAudiences.Add("c59ff9d1-5468-4f6c-9e54-f68d5eeab93b", null);
+
+                    if (showBeta)
+                    {
+                        if (pallasCurrentVersion.CompareTo(new Version("2.0")) < 0)
+                            AssetAudiences.Add("4d282764-95fe-4e0e-b7da-ea218fd1f75a", "Beta");
+                    }
                     break;
 
                 // watchOS
